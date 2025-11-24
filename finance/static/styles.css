@@ -1,0 +1,124 @@
+/* Global Font (fixes dark-mode font switching) */
+body {
+    font-family: "Montserrat", sans-serif !important;
+    background-color: #f8f9fa;
+    color: #212529;
+    transition: background 0.3s, color 0.3s;
+}
+
+/* NAVBAR BRAND COLORS */
+nav .navbar-brand {
+    font-size: 1.8rem;
+}
+
+nav .navbar-brand .blue { color: #537fbe; }
+nav .navbar-brand .red { color: #ea433b; }
+nav .navbar-brand .yellow { color: #f5b82e; }
+nav .navbar-brand .green { color: #2e944b; }
+
+/* TABLES */
+table {
+    width: 100%;
+}
+
+/* Responsive Table Wrapper */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Buttons Smooth */
+.btn,
+.form-control {
+    transition: all 0.25s ease-in-out;
+}
+
+/* MOBILE OPTIMIZATION */
+@media (max-width: 768px) {
+    nav .navbar-brand {
+        font-size: 1.4rem;
+    }
+
+    main.container {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+    table td,
+    table th {
+        font-size: 0.9rem;
+    }
+}
+
+/* ------------------------- */
+/* DARK MODE FIXES & BEAUTY */
+/* ------------------------- */
+
+body.dark-mode {
+    background-color: #121212 !important;
+    color: #e6e6e6 !important;
+}
+
+/* navbar */
+body.dark-mode nav.navbar {
+    background-color: #181818 !important;
+    border-color: #333 !important;
+}
+
+body.dark-mode nav.navbar .nav-link,
+body.dark-mode nav.navbar .navbar-brand {
+    color: #e6e6e6 !important;
+}
+
+/* tables */
+body.dark-mode table {
+    background-color: #1c1c1c !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .table thead th {
+    background-color: #222 !important;
+}
+
+/* inputs */
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select,
+body.dark-mode .form-control {
+    background-color: #2b2b2b !important;
+    color: #eee !important;
+    border: 1px solid #555 !important;
+}
+
+/* buttons */
+body.dark-mode .btn {
+    background-color: #333 !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode .btn:hover {
+    background-color: #444 !important;
+}
+body, body.dark-mode {
+    font-family: "Montserrat", sans-serif !important;
+}
+ .apology-container {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.apology-container .code {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.apology-container .message {
+    font-size: 1.5rem;
+    opacity: 0.8;
+}
+
+
+
+
+

@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+<form action="/sell" method="post">
+    <select class="form-control" name="symbol" required>
+        <option disabled selected value="">Select a stock</option>
+
+        {% for stock in stocks %}
+            <option value="{{ stock.symbol }}">
+                {{ stock.symbol }} ({{ stock.total_shares }} shares)
+            </option>
+        {% endfor %}
+    </select>
+
+    <input autocomplete="off" class="form-control mt-3" name="shares" placeholder="Shares" type="number" min="1" required>
+
+    <button class="btn btn-primary mt-3" type="submit">Sell</button>
+</form>
+
+{% endblock %}

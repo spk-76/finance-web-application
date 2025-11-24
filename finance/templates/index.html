@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+{% block main %}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Shares</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Avg Cost</th>
+            <th>P/L</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for stock in holdings %}
+        <tr data-symbol="{{ stock.symbol }}" data-shares="{{ stock.shares }}" data-avg="{{ stock.avg_cost }}">
+            <td>{{ stock.symbol }}</td>
+            <td>{{ stock.name }}</td>
+            <td>{{ stock.shares }}</td>
+
+            <td class="price" data-raw="{{ stock.price }}">{{ stock.price | usd }}</td>
+
+            <td class="value" data-raw="{{ stock.value }}">{{ stock.value | usd }}</td>
+
+            <td class="avg_cost">{{ stock.avg_cost | usd }}</td>
+
+            <td class="pl" style="color: {% if stock.profit_loss >= 0 %}green{% else %}red{% endif %};">
+                {{ stock.profit_loss | usd }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Cash: <span id="cash-amount">{{ cash | usd }}</span></h3>
+<h3>Total Portfolio Value: <span id="total-portfolio">{{ total | usd }}</span></h3>
+
+<a href="/download/csv" class="btn btn-secondary mt-3">Download CSV</a>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    function fmtUsd(value) {
+        if (value === null || value === undefined || isNaN(Number(value))) return "$0.00";
+        return "$" + Number(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    async function updateOnce() {
+        const rows = Array.from(document.querySelectorAll("tr[data-symbol]"));
+        let newTotal = 0;
+
+        await Promise.all(rows.map(async (row) => {
+            const symbol = row.dataset.symbol;
+            const shares = Number(row.dataset.shares) || 0;
+            const avg = Number(row.dataset.avg) || 0;
+
+            try {
+                const resp = await fetch(`/price?symbol=${encodeURIComponent(symbol)}`);
+                if (!resp.ok) throw new Error("Fetch failed: " + resp.status);
+
+                const json = await resp.json();
+                if (json.price === undefined || json.price === null) throw new Error("No price in response");
+
+                const price = Number(json.price);
+                const value = price * shares;
+                const pl = value - (avg * shares);
+
+                // update DOM cells (raw for possible future use, formatted text for display)
+                const priceCell = row.querySelector(".price");
+                const valueCell = row.querySelector(".value");
+                const plCell = row.querySelector(".pl");
+
+                if (priceCell) {
+                    priceCell.dataset.raw = price;
+                    priceCell.textContent = fmtUsd(price);
+                }
+                if (valueCell) {
+                    valueCell.dataset.raw = value;
+                    valueCell.textContent = fmtUsd(value);
+                }
+                if (plCell) {
+                    plCell.dataset.raw = pl;
+                    plCell.textContent = fmtUsd(pl);
+                    plCell.style.color = (pl >= 0) ? "green" : "red";
+                }
+
+                newTotal += value;
+            } catch (err) {
+                // show an unobtrusive indicator in the row if price fetch fails
+                const priceCell = row.querySelector(".price");
+                const valueCell = row.querySelector(".value");
+                const plCell = row.querySelector(".pl");
+
+                if (priceCell) priceCell.textContent = "—";
+                if (valueCell) valueCell.textContent = "—";
+                if (plCell) plCell.textContent = "—";
+                console.warn("Price update failed for", symbol, err);
+            }
+        }));
+
+        // add cash (read from template initial value or an element)
+        const cashText = document.getElementById("cash-amount").textContent || "$0.00";
+        const cashNum = Number(cashText.replace(/[^0-9.-]+/g,"")) || 0;
+        const grandTotal = newTotal + cashNum;
+
+        document.getElementById("total-portfolio").textContent = fmtUsd(grandTotal);
+    }
+
+    // run immediately
+    updateOnce();
+
+    // then every 5s
+    setInterval(updateOnce, 5000);
+});
+</script>
+
+{% endblock %}

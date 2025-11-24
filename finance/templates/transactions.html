@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<h2>Transaction History</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Symbol</th>
+            <th>Shares</th>
+            <th>Amount</th>
+            <th>Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in transactions %}
+        <tr>
+            <td>{{ t.type }}</td>
+            <td>{{ t.symbol if t.symbol else "-" }}</td>
+            <td>{{ t.shares if t.shares else "-" }}</td>
+
+            <td style="font-weight: bold;
+                color:
+                    {% if t.type == 'DEPOSIT' %}
+                        green
+                    {% elif t.type == 'WITHDRAW' %}
+                        red
+                    {% else %}
+                        black
+                    {% endif %}
+            ">
+                {% if t.type == 'DEPOSIT' %}
+                    +{{ t.amount | usd }}
+                {% elif t.type == 'WITHDRAW' %}
+                    -{{ t.amount | usd }}
+                {% else %}
+                    {{ t.amount | usd }}
+                {% endif %}
+            </td>
+
+            <td>{{ t.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

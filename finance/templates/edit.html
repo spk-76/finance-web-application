@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<div class="mx-auto" style="max-width: 350px;">
+    <h3>Change Password</h3>
+    <form action="/edit" method="post">
+        <input
+            class="form-control mb-3"
+            name="current"
+            placeholder="Current Password"
+            type="password"
+            required
+        >
+        <input
+            class="form-control mb-3"
+            name="new"
+            placeholder="New Password"
+            type="password"
+            required
+        >
+        <input
+            class="form-control mb-3"
+            name="confirmation"
+            placeholder="Confirm New Password"
+            type="password"
+            required
+        >
+        <button class="btn btn-primary w-100" type="submit">Update Password</button>
+    </form>
+</div>
+{% endblock %}
